@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b2b55" />
+    <meta name="description" content="ระบบตรวจสอบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับนักเรียนโรงเรียนเซนต์เทเรซา" />
+    <title>ตรวจสอบผลการเรียน ร และ 0 | โรงเรียนเซนต์เทเรซา</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="school-identity" href="./" aria-label="โรงเรียนเซนต์เทเรซา หน้าแรก">
+          <img class="school-mark" src="assets/school-mark.png" alt="" width="72" height="72" />
+          <span class="school-name">โรงเรียนเซนต์เทเรซา</span>
+        </a>
+        <p class="header-purpose">ระบบประกาศผลการเรียน</p>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <h1 id="page-title">ตรวจสอบผลการเรียน ร และ 0</h1>
+        <p>กรอกรหัสประจำตัวนักเรียนเพื่อดูรายวิชาที่ต้องดำเนินการ</p>
+      </section>
+
+      <section class="lookup-panel" aria-label="ค้นหาผลการเรียน">
+        <form id="search-form" class="search-form" novalidate>
+          <div class="field-group">
+            <label for="student-id">รหัสประจำตัวนักเรียน</label>
+            <div class="input-wrap">
+              <svg class="input-icon" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+                <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" />
+              </svg>
+              <input
+                id="student-id"
+                name="studentId"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                maxlength="10"
+                aria-describedby="student-id-hint form-error"
+                placeholder="เช่น 12345"
+              />
+            </div>
+            <p id="student-id-hint" class="field-hint">กรอกตัวเลข 4–10 หลัก</p>
+            <p id="form-error" class="form-error" aria-live="polite"></p>
+          </div>
+
+          <button class="submit-button" type="submit">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-4-4" />
+            </svg>
+            <span>ตรวจสอบผลการเรียน</span>
+          </button>
+        </form>
+        <p class="privacy-note">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          ระบบจะแสดงผลเฉพาะรหัสนักเรียนที่กรอกเท่านั้น
+        </p>
+      </section>
+
+      <div id="status-region" class="status-region" role="status" aria-live="polite" aria-atomic="true"></div>
+      <section id="result-region" class="result-region" aria-live="polite" aria-label="ผลการค้นหา"></section>
+
+      <aside class="contact-note">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v5M12 8h.01" />
+        </svg>
+        <p>หากข้อมูลไม่ถูกต้อง กรุณาติดต่อฝ่ายทะเบียนหรือครูประจำวิชา</p>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+      <span>โรงเรียนเซนต์เทเรซา</span>
+      <span aria-hidden="true">•</span>
+      <span>ระบบตรวจสอบผลการเรียน</span>
+    </footer>
+
+  </body>
+</html>
