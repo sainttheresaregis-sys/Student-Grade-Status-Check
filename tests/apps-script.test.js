@@ -131,3 +131,43 @@ test("doGet returns a safe service error without leaking backend details", () =>
   assert.equal(outputText, '__gradeLookup_safe({"ok":false,"error":"SERVICE_UNAVAILABLE"});');
   assert.doesNotMatch(outputText, /SPREADSHEET_ID|SHEET_NAME|Error/);
 });
+
+test("verifyConfiguration opens the configured sheet and validates its headers", () => {
+  let openedSpreadsheetId = "";
+  let requestedSheetName = "";
+  const { context } = loadAppsScript({
+    PropertiesService: {
+      getScriptProperties() {
+        return {
+          getProperties: () => ({
+            SPREADSHEET_ID: "sheet-id",
+            SHEET_NAME: "ผลการเรียน",
+          }),
+        };
+      },
+    },
+    SpreadsheetApp: {
+      openById(spreadsheetId) {
+        openedSpreadsheetId = spreadsheetId;
+        return {
+          getSheetByName(sheetName) {
+            requestedSheetName = sheetName;
+            return {
+              getRange(row, column, rowCount, columnCount) {
+                assert.deepEqual([row, column, rowCount, columnCount], [1, 1, 1, 5]);
+                return { getDisplayValues: () => [CURRENT_HEADERS] };
+              },
+              getLastColumn() {
+                return 5;
+              },
+            };
+          },
+        };
+      },
+    },
+  });
+
+  assert.equal(context.verifyConfiguration(), "พร้อมใช้งาน");
+  assert.equal(openedSpreadsheetId, "sheet-id");
+  assert.equal(requestedSheetName, "ผลการเรียน");
+});

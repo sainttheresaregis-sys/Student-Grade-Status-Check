@@ -6,6 +6,19 @@ var HEADER_ALIASES_ = {
   status: ["ผลการเรียน"],
 };
 
+function verifyConfiguration() {
+  var properties = PropertiesService.getScriptProperties().getProperties();
+  var sheet = getConfiguredSheet_(properties);
+  var lastColumn = sheet.getLastColumn();
+  if (lastColumn < 1) {
+    throw new Error("Configured sheet is empty");
+  }
+
+  var headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0];
+  resolveColumns_(headers);
+  return "พร้อมใช้งาน";
+}
+
 function doGet(e) {
   var parameters = (e && e.parameter) || {};
   var callback = trimValue_(parameters.callback);
@@ -22,22 +35,26 @@ function doGet(e) {
 
   try {
     var properties = PropertiesService.getScriptProperties().getProperties();
-    if (!properties.SPREADSHEET_ID || !properties.SHEET_NAME) {
-      throw new Error("Missing script configuration");
-    }
-
-    var spreadsheet = SpreadsheetApp.openById(properties.SPREADSHEET_ID);
-    var sheet = spreadsheet.getSheetByName(properties.SHEET_NAME);
-    if (!sheet) {
-      throw new Error("Configured sheet was not found");
-    }
-
+    var sheet = getConfiguredSheet_(properties);
     var rows = sheet.getDataRange().getDisplayValues();
     return createJsonpOutput_(callback, buildLookupResponse_(rows, studentId));
   } catch (error) {
     console.error("Grade lookup service failure: " + String(error && error.message));
     return createJsonpOutput_(callback, { ok: false, error: "SERVICE_UNAVAILABLE" });
   }
+}
+
+function getConfiguredSheet_(properties) {
+  if (!properties.SPREADSHEET_ID || !properties.SHEET_NAME) {
+    throw new Error("Missing script configuration");
+  }
+
+  var spreadsheet = SpreadsheetApp.openById(properties.SPREADSHEET_ID);
+  var sheet = spreadsheet.getSheetByName(properties.SHEET_NAME);
+  if (!sheet) {
+    throw new Error("Configured sheet was not found");
+  }
+  return sheet;
 }
 
 function buildLookupResponse_(rows, studentId) {
