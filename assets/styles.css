@@ -691,3 +691,5 @@ button:focus-visible,a:focus-visible,summary:focus-visible {
 
 }
 
+.result-count--activity, .result-row--activity .result-status { background: #eaf2fb; color: #0b2b55; }
+.activity-guide { padding: 16px; border: 1px solid var(--slate-200); border-radius: 12px; color: var(--slate-700); background: white; font-size: 15px; }

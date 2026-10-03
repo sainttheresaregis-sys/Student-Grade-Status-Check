@@ -10,7 +10,7 @@ export function validateLookupResponse(value) {
   const student = value.student;
   if (!student || typeof student.name !== "string" || typeof student.className !== "string" ||
       !Array.isArray(student.results) || student.results.some(row =>
-        !row || typeof row.subject !== "string" || !["ร", "0"].includes(row.status))) {
+        !row || typeof row.subject !== "string" || !["ร", "0", "มผ."].includes(row.status))) {
     throw failure("SERVICE_ERROR");
   }
   return { ok: true, found: true, student: {

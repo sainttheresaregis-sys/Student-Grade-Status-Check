@@ -24,9 +24,9 @@ export function renderResult(container, { student }) {
       el("p", "student-class", `ชั้น ${student.className}`),
     ]),
   ]);
-  const counts = ["ร", "0"].map(status => ({status, count: student.results.filter(row => row.status === status).length})).filter(item => item.count);
+  const counts = ["ร", "0", "มผ."].map(status => ({status, count: student.results.filter(row => row.status === status).length})).filter(item => item.count);
   const overview = el("div", "result-overview", undefined, counts.map(({status, count}) =>
-    el("h2", `result-count result-count--${status === "ร" ? "pending" : "zero"}`, `พบผลการเรียน ${status} จำนวน ${count} รายวิชา`)));
+    el("h2", `result-count result-count--${status === "ร" ? "pending" : status === "0" ? "zero" : "activity"}`, `พบผลการเรียน ${status} จำนวน ${count} รายวิชา`)));
   const rows = student.results.map(({ subject, status }) => {
     const badge = el("span", "result-status", `สถานะ ${status}`);
     badge.setAttribute("aria-label", `ผลการเรียน ${status}`);
@@ -34,11 +34,11 @@ export function renderResult(container, { student }) {
     const code = parts ? parts[1] : "—";
     const name = parts ? parts[2] : subject;
     const detail = (label, value, className) => el("div", className, undefined, [el("span", "detail-label", label), el("span", "detail-value", value)]);
-    return el("li", `result-row result-row--${status === "ร" ? "pending" : "zero"}`, undefined, [
+    return el("li", `result-row result-row--${status === "ร" ? "pending" : status === "0" ? "zero" : "activity"}`, undefined, [
       detail("รหัสวิชา", code, "subject-code"),
       detail("ชื่อวิชา", name, "result-subject"),
       el("div", "subject-grade", undefined, [el("span", "detail-label", "ผลการเรียน"), badge]),
-      detail("แนวทางดำเนินการ", status === "ร" ? "ติดต่อคุณครูประจำรายวิชา" : "รับเอกสารจากฝ่ายวิชาการก่อนดำเนินการแก้ผลการเรียน", "subject-action"),
+      detail("แนวทางดำเนินการ", status !== "0" ? "ติดต่อคุณครูประจำรายวิชา" : "รับเอกสารจากฝ่ายวิชาการก่อนดำเนินการแก้ผลการเรียน", "subject-action"),
     ]);
   });
   display(container, el("article", "result-card", undefined, [overview, summary,
@@ -52,8 +52,8 @@ export function renderEmpty(container) {
   emoji.setAttribute("aria-hidden", "true");
   display(container, el("article", "empty-state empty-state--pass", undefined, [
     emoji,
-    el("h2", "empty-state__title", "ผ่านทุกรายวิชา"),
-    el("p", "empty-state__hint", "ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับรหัสนักเรียนนี้"),
+    el("h2", "empty-state__title", "ไม่พบรายวิชาที่ต้องดำเนินการ"),
+    el("p", "empty-state__hint", "ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 หรือ มผ. สำหรับรหัสนักเรียนนี้"),
     el("p", "guide-reminder", "กรุณาตรวจสอบรหัสนักเรียนให้ถูกต้องก่อนทุกครั้ง"),
   ]));
 }

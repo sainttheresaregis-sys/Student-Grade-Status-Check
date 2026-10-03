@@ -35,7 +35,7 @@ test("renderResult safely renders student identity and every result as text", ()
 test("renderEmpty uses the privacy-preserving neutral message", () => {
   const container = createContainer();
   renderEmpty(container);
-  assert.match(container.textContent, /ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับรหัสนักเรียนนี้/);
+  assert.match(container.textContent, /ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 หรือ มผ. สำหรับรหัสนักเรียนนี้/);
 });
 
 test("renderServiceError shows a generic message and working retry action", () => {
@@ -61,4 +61,11 @@ test('result presentation summarizes both statuses and splits subject code witho
  assert.match(container.textContent,/ติดต่อคุณครูประจำรายวิชา/);
  assert.match(container.textContent,/รับเอกสารจากฝ่ายวิชาการ/);
  assert.equal(response.student.results[0].subject,'อ22203 สนุกกับภาษาอังกฤษ');
+});
+
+test('renders มผ. separately from zero grades',()=>{
+ const container=createContainer();renderResult(container,{student:{name:'ทดสอบ',className:'ม.6/3',results:[{subject:'แนะแนว',status:'มผ.'}]}});
+ assert.match(container.textContent,/พบผลการเรียน มผ. จำนวน 1 รายวิชา/);
+ assert.match(container.textContent,/ติดต่อคุณครูประจำรายวิชา/);
+ assert.doesNotMatch(container.textContent,/ผ่านทุกรายวิชา/);
 });

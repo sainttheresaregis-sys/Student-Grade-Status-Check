@@ -191,3 +191,9 @@ test("getConfiguredSheet_ uses the first sheet in a bound spreadsheet without pr
   assert.equal(context.getConfiguredSheet_({}), firstSheet);
   assert.equal(activeSpreadsheetReads, 1);
 });
+
+test('lookup includes guidance activity marked มผ.',()=>{
+ const {context}=loadAppsScript();
+ const result=context.buildLookupResponse_([CORRECTED_HEADERS,['12345','ทดสอบ','ม.6/3','แนะแนว','มผ.']],'12345');
+ assert.equal(result.found,true);assert.equal(result.student.results[0].status,'มผ.');
+});

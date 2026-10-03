@@ -86,7 +86,7 @@ function buildLookupResponse_(rows, studentId) {
     }
 
     var status = trimValue_(row[columns.status]);
-    if (status !== "ร" && status !== "0") {
+    if (status !== "ร" && status !== "0" && status !== "มผ.") {
       continue;
     }
 
