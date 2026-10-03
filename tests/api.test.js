@@ -99,3 +99,25 @@ for (const [label, url] of [
     assert.equal(browser.appended.length, 0);
   });
 }
+
+test("lookupStudent rejects malformed successful payloads and cleans up", async () => {
+  for (const payload of [{ok:true}, {ok:true,found:true}, {ok:true,found:true,student:{name:'test',className:'test',results:[{subject:'test',status:'4'}]}}]) {
+    const browser = createBrowserHarness();
+    const pending = lookupStudent('12345', browser);
+    const callback = getCallbackName(browser.appended[0]);
+    browser.windowRef[callback](payload);
+    await assert.rejects(pending, {code:'SERVICE_ERROR'});
+    assert.equal(browser.windowRef[callback], undefined);
+    assert.equal(browser.removed.length, 1);
+  }
+});
+test("lookupStudent rejects invalid IDs before issuing a request", async () => {
+  const browser = createBrowserHarness();
+  await assert.rejects(lookupStudent('abc', browser), {code:'INVALID_REQUEST'});
+  assert.equal(browser.appended.length, 0);
+});
+test("lookupStudent refuses an unexpected script host", async () => {
+  const browser = createBrowserHarness('https://example.com/macros/s/example/exec');
+  await assert.rejects(lookupStudent('12345', browser), {code:'CONFIG_MISSING'});
+  assert.equal(browser.appended.length, 0);
+});

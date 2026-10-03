@@ -2,112 +2,65 @@ import { lookupStudent } from "./api.js";
 import { clearResults, renderEmpty, renderResult, renderServiceError } from "./render.js";
 import { validateStudentId } from "./validation.js";
 
-export function createSearchController({
-  form,
-  input,
-  errorRegion,
-  statusRegion,
-  resultRegion,
-  submitButton,
-  submitLabel,
-  lookup = lookupStudent,
-  renderResult: showResult = renderResult,
-  renderEmpty: showEmpty = renderEmpty,
-  renderServiceError: showServiceError = renderServiceError,
-}) {
-  let requestToken = 0;
-  let pendingStudentId = null;
-  let lastStudentId = "";
-
-  const setLoading = (loading) => {
-    submitButton.disabled = loading;
-    submitButton.setAttribute("aria-busy", String(loading));
-    submitLabel.textContent = loading ? "กำลังตรวจสอบ…" : "ตรวจสอบผลการเรียน";
-    statusRegion.textContent = loading ? "กำลังตรวจสอบข้อมูล…" : "";
+export function createSearchController(elements) {
+  const { form, input, errorRegion, statusRegion, resultRegion, submitButton, submitLabel } = elements;
+  const lookup = elements.lookup ?? lookupStudent;
+  const views = {
+    found: elements.renderResult ?? renderResult,
+    empty: elements.renderEmpty ?? renderEmpty,
+    error: elements.renderServiceError ?? renderServiceError,
   };
-
-  const clearValidation = () => {
-    errorRegion.textContent = "";
-    input.removeAttribute("aria-invalid");
-  };
-
-  const showValidationError = (message) => {
-    errorRegion.textContent = message;
-    input.setAttribute("aria-invalid", "true");
-    input.focus();
-  };
-
-  const runSearch = async (rawValue) => {
-    const validation = validateStudentId(rawValue);
-
-    if (validation.valid && pendingStudentId === validation.value) {
-      return;
-    }
-
-    requestToken += 1;
-    const currentToken = requestToken;
-
+  let active = null;
+  function busy(value) {
+    submitButton.disabled = value;
+    submitButton.setAttribute("aria-busy", String(value));
+    submitLabel.textContent = value ? "กำลังตรวจสอบ…" : "ตรวจสอบผลการเรียน";
+    statusRegion.textContent = value ? "กำลังตรวจสอบข้อมูล…" : "";
+  }
+  async function search(raw) {
+    const checked = validateStudentId(raw);
+    if (checked.valid && active?.id === checked.value) return;
+    const request = { id: checked.value };
+    active = request;
     clearResults(resultRegion);
-    statusRegion.textContent = "";
-
-    if (!validation.valid) {
-      pendingStudentId = null;
-      setLoading(false);
-      showValidationError(validation.message);
+    errorRegion.textContent = checked.message;
+    if (!checked.valid) {
+      active = null;
+      busy(false);
+      input.setAttribute("aria-invalid", "true");
+      input.focus();
       return;
     }
-
-    clearValidation();
-    input.value = validation.value;
-    pendingStudentId = validation.value;
-    lastStudentId = validation.value;
-    setLoading(true);
-
+    input.removeAttribute("aria-invalid");
+    input.value = checked.value;
+    busy(true);
     try {
-      const response = await lookup(validation.value);
-      if (currentToken !== requestToken) return;
-
-      if (response.found) {
-        showResult(resultRegion, response);
-      } else {
-        showEmpty(resultRegion);
-      }
+      const response = await lookup(request.id);
+      if (active !== request) return;
+      if (response.found) views.found(resultRegion, response);
+      else views.empty(resultRegion);
     } catch {
-      if (currentToken !== requestToken) return;
-      showServiceError(resultRegion, () => runSearch(lastStudentId));
+      if (active === request) views.error(resultRegion, () => search(request.id));
     } finally {
-      if (currentToken === requestToken) {
-        pendingStudentId = null;
-        setLoading(false);
-      }
+      if (active === request) { active = null; busy(false); }
     }
-  };
-
-  const handleSubmit = (event) => {
-    event?.preventDefault?.();
-    return runSearch(input.value);
-  };
-
-  form.addEventListener("submit", handleSubmit);
-
-  return { submit: handleSubmit };
+  }
+  const submit = event => { event?.preventDefault?.(); return search(input.value); };
+  form.addEventListener("submit", submit);
+  return { submit };
 }
 
-function initializePage() {
-  const form = document.querySelector("#search-form");
+export function initializePage(documentRef = globalThis.document) {
+  const form = documentRef.querySelector("#search-form");
   if (!form) return;
-
-  createSearchController({
+  return createSearchController({
     form,
-    input: document.querySelector("#student-id"),
-    errorRegion: document.querySelector("#form-error"),
-    statusRegion: document.querySelector("#status-region"),
-    resultRegion: document.querySelector("#result-region"),
+    input: documentRef.querySelector("#student-id"),
+    errorRegion: documentRef.querySelector("#form-error"),
+    statusRegion: documentRef.querySelector("#status-region"),
+    resultRegion: documentRef.querySelector("#result-region"),
     submitButton: form.querySelector("button[type='submit']"),
     submitLabel: form.querySelector("button[type='submit'] span"),
   });
 }
-
-if (typeof document !== "undefined") {
-  initializePage();
-}
+if (typeof document !== "undefined") initializePage();

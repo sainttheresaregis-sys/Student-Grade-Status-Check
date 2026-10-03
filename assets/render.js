@@ -1,75 +1,51 @@
-function element(documentRef, tagName, className, text) {
-  const node = documentRef.createElement(tagName);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-export function clearResults(container) {
-  container.replaceChildren();
-}
-
-export function renderResult(container, response) {
+function createView(container) {
   const documentRef = container.ownerDocument ?? globalThis.document;
-  const { student } = response;
-  const card = element(documentRef, "article", "result-card");
-
-  const summary = element(documentRef, "header", "student-summary");
-  const avatar = element(documentRef, "span", "student-avatar", "นร.");
+  return (tag, className, text, children = []) => {
+    const node = documentRef.createElement(tag);
+    node.className = className;
+    if (text !== undefined) node.textContent = text;
+    node.append(...children);
+    return node;
+  };
+}
+function display(container, content) {
+  content.setAttribute("tabindex", "-1");
+  container.replaceChildren(content);
+  content.focus();
+}
+export function clearResults(container) { container.replaceChildren(); }
+export function renderResult(container, { student }) {
+  const el = createView(container);
+  const avatar = el("span", "student-avatar", "นร.");
   avatar.setAttribute("aria-hidden", "true");
-  const identity = element(documentRef, "div", "student-identity");
-  identity.append(
-    element(documentRef, "h2", "student-name", student.name),
-    element(documentRef, "p", "student-class", `ชั้น ${student.className}`),
-  );
-  summary.append(avatar, identity);
-
-  const heading = element(documentRef, "h3", "result-heading", "รายวิชาที่ต้องดำเนินการ");
-  const list = element(documentRef, "ul", "result-list");
-
-  for (const result of student.results) {
-    const modifier = result.status === "ร" ? "pending" : "zero";
-    const row = element(documentRef, "li", `result-row result-row--${modifier}`);
-    const subject = element(documentRef, "span", "result-subject", result.subject);
-    const status = element(documentRef, "span", "result-status", `สถานะ ${result.status}`);
-    status.setAttribute("aria-label", `ผลการเรียน ${result.status}`);
-    row.append(subject, status);
-    list.append(row);
-  }
-
-  card.append(summary, heading, list);
-  container.replaceChildren(card);
-  card.setAttribute("tabindex", "-1");
-  card.focus();
+  const summary = el("header", "student-summary", undefined, [avatar,
+    el("div", "student-identity", undefined, [
+      el("h2", "student-name", student.name),
+      el("p", "student-class", `ชั้น ${student.className}`),
+    ]),
+  ]);
+  const rows = student.results.map(({ subject, status }) => {
+    const badge = el("span", "result-status", `สถานะ ${status}`);
+    badge.setAttribute("aria-label", `ผลการเรียน ${status}`);
+    return el("li", `result-row result-row--${status === "ร" ? "pending" : "zero"}`, undefined, [
+      el("span", "result-subject", subject), badge,
+    ]);
+  });
+  display(container, el("article", "result-card", undefined, [summary,
+    el("h3", "result-heading", "รายวิชาที่ต้องดำเนินการ"),
+    el("ul", "result-list", undefined, rows),
+  ]));
 }
-
 export function renderEmpty(container) {
-  const documentRef = container.ownerDocument ?? globalThis.document;
-  const message = element(
-    documentRef,
-    "article",
-    "empty-state",
-    "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้",
-  );
-  message.setAttribute("tabindex", "-1");
-  container.replaceChildren(message);
-  message.focus();
+  display(container, createView(container)("article", "empty-state", "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้"));
 }
-
 export function renderServiceError(container, retry) {
-  const documentRef = container.ownerDocument ?? globalThis.document;
-  const panel = element(documentRef, "article", "service-error");
-  panel.setAttribute("tabindex", "-1");
-  panel.append(
-    element(documentRef, "h2", "service-error__title", "ไม่สามารถตรวจสอบข้อมูลได้ในขณะนี้"),
-    element(documentRef, "p", "service-error__body", "กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง"),
-  );
-
-  const retryButton = element(documentRef, "button", "retry-button", "ลองอีกครั้ง");
-  retryButton.setAttribute("type", "button");
-  retryButton.addEventListener("click", retry);
-  panel.append(retryButton);
-
-  container.replaceChildren(panel);
-  panel.focus();
+  const el = createView(container);
+  const button = el("button", "retry-button", "ลองอีกครั้ง");
+  button.setAttribute("type", "button");
+  button.addEventListener("click", retry);
+  display(container, el("article", "service-error", undefined, [
+    el("h2", "service-error__title", "ไม่สามารถตรวจสอบข้อมูลได้ในขณะนี้"),
+    el("p", "service-error__body", "กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง"), button,
+  ]));
 }
