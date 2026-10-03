@@ -43,7 +43,7 @@ export function renderEmpty(container) {
   display(container, el("article", "empty-state", undefined, [
     emoji,
     el("h2", "empty-state__title", "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้"),
-    el("p", "empty-state__hint", "ตรวจสอบรหัสนักเรียนอีกครั้งนะ หากรหัสถูกต้องและมีข้อสงสัย ติดต่อฝ่ายทะเบียนได้เลย"),
+    el("p", "empty-state__hint", "ตรวจสอบรหัสนักเรียนอีกครั้ง หากรหัสถูกต้องและไม่พบข้อมูลผลการเรียน ร หรือ 0 แสดงว่านักเรียนรหัสนี้ผ่านทุกรายวิชาครับ"),
   ]));
 }
 export function renderServiceError(container, retry) {
