@@ -683,3 +683,6 @@ body {
   .submit-button:hover { transform: none; }
 }
 .grade-types { white-space: nowrap; }
+.empty-state__emoji { font-size: 2.6rem; line-height: 1.5; margin-bottom: 12px; }
+.empty-state__title { margin: 0; font-size: 1.15rem; line-height: 1.7; }
+.empty-state__hint { margin: 12px auto 0; max-width: 560px; font-size: 0.95rem; line-height: 1.8; font-weight: 400; color: var(--slate-600); }

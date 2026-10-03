@@ -46,12 +46,12 @@
                 type="text"
                 inputmode="numeric" enterkeyhint="search"
                 autocomplete="off"
-                maxlength="10"
+                pattern="[0-9]{5}"
                 aria-describedby="student-id-hint form-error"
                 placeholder="เช่น 12345"
               />
             </div>
-            <p id="student-id-hint" class="field-hint">กรอกตัวเลข 4–10 หลัก</p>
+            <p id="student-id-hint" class="field-hint">กรอกตัวเลข 5 หลัก</p>
             <p id="form-error" class="form-error" aria-live="polite"></p>
           </div>
 
@@ -78,7 +78,7 @@
       <details class="lookup-help">
         <summary>วิธีตรวจสอบผลการเรียน</summary>
         <ol>
-          <li>กรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 4–10 หลัก โดยใส่เลขศูนย์ด้านหน้าให้ครบตามรหัส</li>
+          <li>กรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 5 หลัก โดยใส่เลขศูนย์ด้านหน้าให้ครบตามรหัส</li>
           <li>กด “ตรวจสอบผลการเรียน” ระบบจะแสดงรายวิชาที่มีผล ร หรือ 0 ของรหัสที่ค้นหา</li>
           <li>หากมีรายวิชาที่ต้องดำเนินการ ให้ติดต่อครูประจำวิชาเพื่อสอบถามขั้นตอนการแก้ไขผลการเรียน</li>
         </ol>
@@ -104,6 +104,3 @@
     <script type="module" src="assets/app.js"></script>
   </body>
 </html>
-
-
-

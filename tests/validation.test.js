@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { normalizeStudentId, validateStudentId } from "../assets/validation.js";
 
-const VALIDATION_MESSAGE = "กรุณากรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 4–10 หลัก";
+const VALIDATION_MESSAGE = "กรุณากรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 5 หลัก";
 
 test("normalizeStudentId trims ASCII student IDs", () => {
   assert.equal(normalizeStudentId("  12345  "), "12345");
@@ -15,15 +15,15 @@ test("normalizeStudentId safely handles non-string values", () => {
   assert.equal(normalizeStudentId(12345), "12345");
 });
 
-test("validateStudentId accepts 4 to 10 ASCII digits", () => {
-  assert.deepEqual(validateStudentId(" 1234 "), { valid: true, value: "1234", message: "" });
-  assert.deepEqual(validateStudentId("1234567890"), { valid: true, value: "1234567890", message: "" });
+test("validateStudentId accepts exactly 5 ASCII digits", () => {
+  assert.deepEqual(validateStudentId(" 12345 "), { valid: true, value: "12345", message: "" });
+  assert.deepEqual(validateStudentId("00123"), { valid: true, value: "00123", message: "" });
 });
 
 for (const [label, value] of [
   ["empty input", ""],
-  ["too short input", "123"],
-  ["too long input", "12345678901"],
+  ["too short input", "1234"],
+  ["too long input", "123456"],
   ["mixed input", "12A45"],
   ["Thai numerals", "๑๒๓๔๕"],
 ]) {

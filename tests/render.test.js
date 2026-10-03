@@ -35,7 +35,7 @@ test("renderResult safely renders student identity and every result as text", ()
 test("renderEmpty uses the privacy-preserving neutral message", () => {
   const container = createContainer();
   renderEmpty(container);
-  assert.equal(container.textContent, "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้");
+  assert.match(container.textContent, /ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้/);
 });
 
 test("renderServiceError shows a generic message and working retry action", () => {

@@ -46,6 +46,15 @@ export function createSearchController(elements) {
     }
   }
   const submit = event => { event?.preventDefault?.(); return search(input.value); };
+  input.addEventListener("input", () => {
+    active = null;
+    busy(false);
+    clearResults(resultRegion);
+    const checked = validateStudentId(input.value);
+    errorRegion.textContent = checked.message;
+    if (checked.valid) input.removeAttribute("aria-invalid");
+    else input.setAttribute("aria-invalid", "true");
+  });
   form.addEventListener("submit", submit);
   return { submit };
 }

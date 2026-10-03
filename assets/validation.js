@@ -1,7 +1,7 @@
-const STUDENT_ID_PATTERN = /^[0-9]{4,10}$/;
+const STUDENT_ID_PATTERN = /^[0-9]{5}$/;
 
 export const STUDENT_ID_VALIDATION_MESSAGE =
-  "กรุณากรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 4–10 หลัก";
+  "กรุณากรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 5 หลัก";
 
 export function normalizeStudentId(value) {
   if (value === null || value === undefined) {

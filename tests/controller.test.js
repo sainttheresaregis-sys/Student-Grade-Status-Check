@@ -81,7 +81,7 @@ test("controller rejects invalid input, clears old results, and restores focus",
   assert.equal(harness.result.children.length, 0);
   assert.equal(harness.input.attributes.get("aria-invalid"), "true");
   assert.equal(harness.input.focused, true);
-  assert.equal(harness.error.textContent, "กรุณากรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 4–10 หลัก");
+  assert.equal(harness.error.textContent, "กรุณากรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 5 หลัก");
 });
 
 test("controller exposes loading state and ignores a duplicate pending submission", async () => {
@@ -158,4 +158,26 @@ test("controller ignores a late response from an older search", async () => {
   await firstSubmit;
 
   assert.deepEqual(harness.calls.result, [newerResponse]);
+});
+
+
+test("typing validates immediately and invalidates a pending search", async () => {
+  const pending = deferred();
+  const harness = createHarness({lookup: () => pending.promise});
+  harness.input.value = '12345';
+  const request = harness.submit();
+  harness.input.value = '1234';
+  harness.input.listeners.get('input')();
+  assert.equal(harness.input.attributes.get('aria-invalid'), 'true');
+  assert.ok(harness.error.textContent);
+  pending.resolve({ok:true,found:false});
+  await request;
+  assert.equal(harness.calls.empty, 0);
+  harness.input.value = '123456';
+  harness.input.listeners.get('input')();
+  assert.ok(harness.error.textContent);
+  harness.input.value = '00123';
+  harness.input.listeners.get('input')();
+  assert.equal(harness.error.textContent, '');
+  assert.equal(harness.input.attributes.has('aria-invalid'), false);
 });

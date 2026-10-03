@@ -37,7 +37,14 @@ export function renderResult(container, { student }) {
   ]));
 }
 export function renderEmpty(container) {
-  display(container, createView(container)("article", "empty-state", "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้"));
+  const el = createView(container);
+  const emoji = el("div", "empty-state__emoji", "🐻🌷✨");
+  emoji.setAttribute("aria-hidden", "true");
+  display(container, el("article", "empty-state", undefined, [
+    emoji,
+    el("h2", "empty-state__title", "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้"),
+    el("p", "empty-state__hint", "ตรวจสอบรหัสนักเรียนอีกครั้งนะ หากรหัสถูกต้องและมีข้อสงสัย ติดต่อฝ่ายทะเบียนได้เลย"),
+  ]));
 }
 export function renderServiceError(container, retry) {
   const el = createView(container);
