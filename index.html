@@ -75,14 +75,22 @@
       <div id="status-region" class="status-region" role="status" aria-live="polite" aria-atomic="true"></div>
       <section id="result-region" class="result-region" aria-live="polite" aria-label="ผลการค้นหา"></section>
 
+      <section class="grade-guide" aria-label="คำแนะนำการตรวจสอบและแก้ไขผลการเรียน">
+        <h2><span aria-hidden="true">🔍</span> กรุณาตรวจสอบรหัสนักเรียนให้ถูกต้อง</h2>
+        <ul>
+          <li><span aria-hidden="true">✅</span><div><strong>ไม่พบผลการเรียน ร หรือ 0</strong><p>แสดงว่า <strong>ผ่านทุกรายวิชา</strong></p></div></li>
+          <li><span aria-hidden="true">🟡</span><div><strong>ผลการเรียน “ร”</strong><p>กรุณาติดต่อ <strong>คุณครูประจำรายวิชา</strong> เพื่อดำเนินการแก้ผลการเรียน</p></div></li>
+          <li><span aria-hidden="true">🔴</span><div><strong>ผลการเรียน “0”</strong><p>กรุณาติดต่อ <strong>ฝ่ายวิชาการเพื่อรับเอกสาร</strong> ก่อนดำเนินการแก้ผลการเรียนในขั้นตอนต่อไป</p></div></li>
+        </ul>
+      </section>
       <details class="lookup-help">
         <summary>วิธีตรวจสอบผลการเรียน</summary>
         <ol>
           <li>กรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 5 หลัก โดยใส่เลขศูนย์ด้านหน้าให้ครบตามรหัส</li>
           <li>กด “ตรวจสอบผลการเรียน” ระบบจะแสดงรายวิชาที่มีผล ร หรือ 0 ของรหัสที่ค้นหา</li>
-          <li>หากมีรายวิชาที่ต้องดำเนินการ ให้ติดต่อครูประจำวิชาเพื่อสอบถามขั้นตอนการแก้ไขผลการเรียน</li>
+          <li>ดำเนินการตามคำแนะนำสำหรับผล ร หรือ 0 ที่แสดงด้านบน</li>
         </ol>
-        <p>หากไม่พบข้อมูล ให้ตรวจสอบรหัสอีกครั้ง ข้อความนี้ไม่ได้ยืนยันผลการเรียนในรายวิชาอื่น</p>
+        <p>ตรวจสอบรหัสนักเรียนให้ถูกต้องทุกครั้งก่อนอ่านผลการค้นหา</p>
       </details>
 
       <aside class="contact-note">
