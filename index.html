@@ -28,8 +28,9 @@
 
     <main id="main-content" class="page-shell" tabindex="-1">
       <section class="intro" aria-labelledby="page-title">
-        <h1 id="page-title">ตรวจสอบผลการเรียน <span class="grade-types">ร และ 0</span></h1>
-        <p>กรอกรหัสประจำตัวนักเรียนเพื่อดูรายวิชาที่ต้องดำเนินการ</p>
+        <h1 id="page-title">ตรวจสอบผลการเรียน <span class="grade-types">‘ร’ และ ‘0’</span></h1>
+        <p class="term-label">ภาคเรียนที่ 1 ปีการศึกษา 2569</p>
+        <p class="intro-description">กรอกรหัสนักเรียน 5 หลัก เพื่อตรวจสอบรายวิชาที่ต้องดำเนินการ</p>
       </section>
 
       <section class="lookup-panel" aria-label="ค้นหาผลการเรียน">
@@ -75,13 +76,14 @@
       <div id="status-region" class="status-region" role="status" aria-live="polite" aria-atomic="true"></div>
       <section id="result-region" class="result-region" aria-live="polite" aria-label="ผลการค้นหา"></section>
 
-      <section class="grade-guide" aria-label="คำแนะนำการตรวจสอบและแก้ไขผลการเรียน">
-        <h2><span aria-hidden="true">🔍</span> กรุณาตรวจสอบรหัสนักเรียนให้ถูกต้อง</h2>
-        <ul>
-          <li><span aria-hidden="true">✅</span><div><strong>ไม่พบผลการเรียน ร หรือ 0</strong><p>แสดงว่า <strong>ผ่านทุกรายวิชา</strong></p></div></li>
-          <li><span aria-hidden="true">🟡</span><div><strong>ผลการเรียน “ร”</strong><p>กรุณาติดต่อ <strong>คุณครูประจำรายวิชา</strong> เพื่อดำเนินการแก้ผลการเรียน</p></div></li>
-          <li><span aria-hidden="true">🔴</span><div><strong>ผลการเรียน “0”</strong><p>กรุณาติดต่อ <strong>ฝ่ายวิชาการเพื่อรับเอกสาร</strong> ก่อนดำเนินการแก้ผลการเรียนในขั้นตอนต่อไป</p></div></li>
-        </ul>
+      <section class="grade-guide" aria-labelledby="guide-title">
+        <h2 id="guide-title">พบผลการเรียนแล้ว ต้องทำอย่างไร?</h2>
+        <div class="guide-grid">
+<article class="guide-card guide-card--pass"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><p class="guide-status">ไม่พบ “ร” หรือ “0”</p><h3>ผ่านทุกรายวิชา</h3><p>ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับรหัสนักเรียนนี้</p></article>
+<article class="guide-card guide-card--pending"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 8h6v8H9z M11 11h2 M11 13h2"/></svg><p class="guide-status">พบผลการเรียน “ร”</p><h3>ติดต่อคุณครูประจำรายวิชา</h3><p>สอบถามงานหรือขั้นตอนการแก้ผลการเรียนกับคุณครูผู้สอนประจำรายวิชา</p></article>
+<article class="guide-card guide-card--zero"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6 M12 16h.01"/></svg><p class="guide-status">พบผลการเรียน “0”</p><h3>ติดต่อฝ่ายวิชาการ</h3><p>กรุณารับเอกสารจากฝ่ายวิชาการก่อนดำเนินการแก้ผลการเรียน</p></article>
+        </div>
+        <p class="guide-reminder">กรุณาตรวจสอบรหัสนักเรียนให้ถูกต้องก่อนทุกครั้ง</p>
       </section>
       <details class="lookup-help">
         <summary>วิธีตรวจสอบผลการเรียน</summary>
@@ -103,9 +105,8 @@
     </main>
 
     <footer class="site-footer">
-      <span>โรงเรียนเซนต์เทเรซา</span>
-      <span aria-hidden="true">•</span>
-      <span>ระบบตรวจสอบผลการเรียน</span>
+      <span>ฝ่ายวิชาการ โรงเรียนเซนต์เทเรซา</span>
+      <span>ระบบตรวจสอบผลการเรียน ภาคเรียนที่ 1 ปีการศึกษา 2569</span>
     </footer>
 
     <script src="config.js"></script>

@@ -24,26 +24,37 @@ export function renderResult(container, { student }) {
       el("p", "student-class", `ชั้น ${student.className}`),
     ]),
   ]);
+  const counts = ["ร", "0"].map(status => ({status, count: student.results.filter(row => row.status === status).length})).filter(item => item.count);
+  const overview = el("div", "result-overview", undefined, counts.map(({status, count}) =>
+    el("h2", `result-count result-count--${status === "ร" ? "pending" : "zero"}`, `พบผลการเรียน ${status} จำนวน ${count} รายวิชา`)));
   const rows = student.results.map(({ subject, status }) => {
     const badge = el("span", "result-status", `สถานะ ${status}`);
     badge.setAttribute("aria-label", `ผลการเรียน ${status}`);
+    const parts = subject.match(/^([ก-๙A-Za-z]+[0-9]{4,6})\s*[:：]?\s+(.+)$/u);
+    const code = parts ? parts[1] : "—";
+    const name = parts ? parts[2] : subject;
+    const detail = (label, value, className) => el("div", className, undefined, [el("span", "detail-label", label), el("span", "detail-value", value)]);
     return el("li", `result-row result-row--${status === "ร" ? "pending" : "zero"}`, undefined, [
-      el("span", "result-subject", subject), badge,
+      detail("รหัสวิชา", code, "subject-code"),
+      detail("ชื่อวิชา", name, "result-subject"),
+      el("div", "subject-grade", undefined, [el("span", "detail-label", "ผลการเรียน"), badge]),
+      detail("แนวทางดำเนินการ", status === "ร" ? "ติดต่อคุณครูประจำรายวิชา" : "รับเอกสารจากฝ่ายวิชาการก่อนดำเนินการแก้ผลการเรียน", "subject-action"),
     ]);
   });
-  display(container, el("article", "result-card", undefined, [summary,
+  display(container, el("article", "result-card", undefined, [overview, summary,
     el("h3", "result-heading", "รายวิชาที่ต้องดำเนินการ"),
     el("ul", "result-list", undefined, rows),
   ]));
 }
 export function renderEmpty(container) {
   const el = createView(container);
-  const emoji = el("div", "empty-state__emoji", "🐻🌷✨");
+  const emoji = el("div", "pass-symbol", "✓");
   emoji.setAttribute("aria-hidden", "true");
-  display(container, el("article", "empty-state", undefined, [
+  display(container, el("article", "empty-state empty-state--pass", undefined, [
     emoji,
-    el("h2", "empty-state__title", "ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้"),
-    el("p", "empty-state__hint", "ตรวจสอบรหัสนักเรียนอีกครั้ง หากรหัสถูกต้องและไม่พบข้อมูลผลการเรียน ร หรือ 0 แสดงว่านักเรียนรหัสนี้ผ่านทุกรายวิชาครับ"),
+    el("h2", "empty-state__title", "ผ่านทุกรายวิชา"),
+    el("p", "empty-state__hint", "ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับรหัสนักเรียนนี้"),
+    el("p", "guide-reminder", "กรุณาตรวจสอบรหัสนักเรียนให้ถูกต้องก่อนทุกครั้ง"),
   ]));
 }
 export function renderServiceError(container, retry) {

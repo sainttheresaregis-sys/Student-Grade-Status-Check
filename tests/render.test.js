@@ -35,7 +35,7 @@ test("renderResult safely renders student identity and every result as text", ()
 test("renderEmpty uses the privacy-preserving neutral message", () => {
   const container = createContainer();
   renderEmpty(container);
-  assert.match(container.textContent, /ไม่พบข้อมูลผลการเรียน ร หรือ 0 สำหรับรหัสนี้/);
+  assert.match(container.textContent, /ไม่พบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับรหัสนักเรียนนี้/);
 });
 
 test("renderServiceError shows a generic message and working retry action", () => {
@@ -50,4 +50,15 @@ test("renderServiceError shows a generic message and working retry action", () =
   const button = container.children[0].children.find((child) => child.tagName === "BUTTON");
   button.listeners.get("click")();
   assert.equal(retries, 1);
+});
+
+test('result presentation summarizes both statuses and splits subject code without changing source', () => {
+ const container=createContainer();
+ const response={student:{name:'ทดสอบ',className:'ม.2',results:[{subject:'อ22203 สนุกกับภาษาอังกฤษ',status:'ร'},{subject:'ค22101 คณิตศาสตร์',status:'0'}]}};
+ renderResult(container,response);
+ assert.match(container.textContent,/พบผลการเรียน ร จำนวน 1 รายวิชา/);
+ assert.match(container.textContent,/พบผลการเรียน 0 จำนวน 1 รายวิชา/);
+ assert.match(container.textContent,/ติดต่อคุณครูประจำรายวิชา/);
+ assert.match(container.textContent,/รับเอกสารจากฝ่ายวิชาการ/);
+ assert.equal(response.student.results[0].subject,'อ22203 สนุกกับภาษาอังกฤษ');
 });
