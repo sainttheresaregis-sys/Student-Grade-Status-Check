@@ -21,6 +21,10 @@ function verifyConfiguration() {
 
 function doGet(e) {
   var parameters = (e && e.parameter) || {};
+  if (parameters.admin === "1") {
+    return HtmlService.createHtmlOutputFromFile("Admin").setTitle("ผู้ดูแลระบบผลการเรียน")
+      .addMetaTag("viewport", "width=device-width, initial-scale=1");
+  }
   var callback = trimValue_(parameters.callback);
 
   if (!isValidCallback_(callback)) {
@@ -35,6 +39,9 @@ function doGet(e) {
 
   try {
     var properties = PropertiesService.getScriptProperties().getProperties();
+    if (properties.LOOKUP_ENABLED === "false") {
+      return createJsonpOutput_(callback, { ok: false, error: "SYSTEM_CLOSED" });
+    }
     var sheet = getConfiguredSheet_(properties);
     var rows = sheet.getDataRange().getDisplayValues();
     return createJsonpOutput_(callback, buildLookupResponse_(rows, studentId));
@@ -163,4 +170,26 @@ function trimValue_(value) {
 function createJsonpOutput_(callback, payload) {
   return ContentService.createTextOutput(callback + "(" + JSON.stringify(payload) + ");")
     .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+// Called only through the Apps Script HTML service; the PIN never appears in a URL.
+function adminControl(pin, action) {
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("ระบบกำลังทำงาน กรุณาลองใหม่");
+  try {
+    var store = PropertiesService.getScriptProperties();
+    var secret = store.getProperty("ADMIN_PIN");
+    if (!secret) throw new Error("ยังไม่ได้ตั้งค่ารหัสผู้ดูแลระบบ");
+    var cache = CacheService.getScriptCache();
+    var attempts = Number(cache.get("admin_failed_attempts") || 0);
+    if (attempts >= 5) throw new Error("กรอกรหัสผิดหลายครั้ง กรุณาลองใหม่ใน 5 นาที");
+    if (typeof pin !== "string" || pin !== secret) {
+      cache.put("admin_failed_attempts", String(attempts + 1), 300);
+      throw new Error("รหัสผู้ดูแลไม่ถูกต้อง");
+    }
+    if (["status", "open", "close"].indexOf(action) === -1) throw new Error("คำสั่งไม่ถูกต้อง");
+    cache.remove("admin_failed_attempts");
+    if (action !== "status") store.setProperty("LOOKUP_ENABLED", action === "open" ? "true" : "false");
+    return { enabled: store.getProperty("LOOKUP_ENABLED") !== "false" };
+  } finally { lock.releaseLock(); }
 }

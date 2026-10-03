@@ -56,3 +56,10 @@ export function renderServiceError(container, retry) {
     el("p", "service-error__body", "กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง"), button,
   ]));
 }
+export function renderClosed(container) {
+  const el = createView(container);
+  display(container, el("article", "empty-state", undefined, [
+    el("h2", "empty-state__title", "ระบบยังไม่เปิดให้ตรวจสอบผลการเรียน"),
+    el("p", "empty-state__hint", "กรุณากลับมาตรวจสอบภายหลัง หรือติดต่อฝ่ายทะเบียน"),
+  ]));
+}

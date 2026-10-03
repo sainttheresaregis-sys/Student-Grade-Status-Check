@@ -41,7 +41,7 @@ jobs:
       - name: Assemble public site
         run: |
           mkdir _site
-          cp index.html config.js _site/
+          cp index.html admin.html config.js _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Upload Pages artifact

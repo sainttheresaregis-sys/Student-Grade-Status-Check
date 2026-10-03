@@ -1,5 +1,5 @@
 import { lookupStudent } from "./api.js";
-import { clearResults, renderEmpty, renderResult, renderServiceError } from "./render.js";
+import { clearResults, renderEmpty, renderResult, renderServiceError, renderClosed } from "./render.js";
 import { validateStudentId } from "./validation.js";
 
 export function createSearchController(elements) {
@@ -39,8 +39,11 @@ export function createSearchController(elements) {
       if (active !== request) return;
       if (response.found) views.found(resultRegion, response);
       else views.empty(resultRegion);
-    } catch {
-      if (active === request) views.error(resultRegion, () => search(request.id));
+    } catch (error) {
+      if (active === request) {
+        if (error.code === "SYSTEM_CLOSED") renderClosed(resultRegion);
+        else views.error(resultRegion, () => search(request.id));
+      }
     } finally {
       if (active === request) { active = null; busy(false); }
     }

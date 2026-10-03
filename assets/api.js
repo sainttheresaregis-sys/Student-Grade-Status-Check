@@ -4,6 +4,7 @@ const failure = (code) => Object.assign(new Error(code), { code });
 let sequence = 0;
 
 export function validateLookupResponse(value) {
+  if (value?.error === "SYSTEM_CLOSED") throw failure("SYSTEM_CLOSED");
   if (value?.ok !== true || typeof value.found !== "boolean") throw failure("SERVICE_ERROR");
   if (!value.found) return { ok: true, found: false };
   const student = value.student;

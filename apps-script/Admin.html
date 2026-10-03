@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+*{box-sizing:border-box}body{margin:0;background:#eff4f9;color:#0b2b55;font-family:Tahoma,sans-serif;line-height:1.7}main{max-width:520px;margin:48px auto;padding:28px;background:white;border:1px solid #dce5ef;border-radius:18px}h1{font-size:25px;margin:0 0 12px}label{display:block;margin-bottom:8px}input,button{font:inherit;font-size:16px;min-height:48px;border-radius:10px;padding:12px;width:100%}input{border:1px solid #a5b8cc}button{border:0;background:#0b2b55;color:white;cursor:pointer;margin-top:14px}button:disabled{opacity:.55;cursor:wait}.close{background:#a12635}.logout{color:#0b2b55;background:#eaf2fb}#message{min-height:28px;color:#a12635}#status{font-weight:bold;font-size:20px}button:focus-visible,input:focus-visible{outline:3px solid #2875ca;outline-offset:3px}[hidden]{display:none!important}@media(max-width:560px){main{margin:20px 16px;padding:22px}}
+</style></head><body><main>
+<h1>ผู้ดูแลระบบผลการเรียน</h1>
+<form id="login"><label for="pin">รหัสผู้ดูแลระบบ</label><input id="pin" type="password" inputmode="numeric" autocomplete="off" required><button>เข้าสู่ระบบ</button></form>
+<section id="controls" hidden><p id="status" role="status"></p><button id="open" type="button">เปิดระบบค้นหาผลการเรียน</button><button id="close" class="close" type="button">ปิดระบบค้นหาผลการเรียน</button><button id="logout" class="logout" type="button">ออกจากระบบ</button></section>
+<p id="message" role="alert"></p>
+</main><script>
+let secret = '';
+let enabled = null;
+const $ = id => document.getElementById(id);
+function busy(value){document.querySelectorAll('button').forEach(b=>b.disabled=value);if(!value && enabled!==null){$('open').disabled=enabled;$('close').disabled=!enabled;}}
+function run(action){busy(true);$('message').textContent='กำลังดำเนินการ…';google.script.run.withSuccessHandler(result=>{enabled=result.enabled;$('login').hidden=true;$('controls').hidden=false;$('pin').value='';$('status').textContent=enabled?'🟢 เปิดระบบอยู่':'🔴 ปิดระบบอยู่';$('message').textContent=action==='status'?'':'บันทึกสถานะเรียบร้อยแล้ว';busy(false);}).withFailureHandler(error=>{$('message').textContent=error.message||'ไม่สามารถดำเนินการได้ กรุณาลองใหม่';busy(false);}).adminControl(secret,action);}
+$('login').addEventListener('submit',e=>{e.preventDefault();secret=$('pin').value;run('status');});
+$('open').onclick=()=>run('open');$('close').onclick=()=>run('close');
+$('logout').onclick=()=>{secret='';enabled=null;$('controls').hidden=true;$('login').hidden=false;$('message').textContent='';$('pin').value='';busy(false);$('pin').focus();};
+</script></body></html>

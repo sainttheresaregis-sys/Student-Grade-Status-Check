@@ -121,3 +121,9 @@ test("lookupStudent refuses an unexpected script host", async () => {
   await assert.rejects(lookupStudent('12345', browser), {code:'CONFIG_MISSING'});
   assert.equal(browser.appended.length, 0);
 });
+
+test('closed service response has a distinct error code', async () => {
+ const browser=createBrowserHarness();const pending=lookupStudent('12345',browser);
+ browser.windowRef[getCallbackName(browser.appended[0])]({ok:false,error:'SYSTEM_CLOSED'});
+ await assert.rejects(pending,{code:'SYSTEM_CLOSED'});
+});
