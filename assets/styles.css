@@ -693,3 +693,27 @@ button:focus-visible,a:focus-visible,summary:focus-visible {
 
 .result-count--activity, .result-row--activity .result-status { background: #eaf2fb; color: #0b2b55; }
 .activity-guide { padding: 16px; border: 1px solid var(--slate-200); border-radius: 12px; color: var(--slate-700); background: white; font-size: 15px; }
+
+/* Keep the admin entry reachable on narrow phone screens. */
+.header-inner { flex-wrap:wrap; gap:8px 16px; padding-block:10px; }
+.school-identity { min-width:0; }
+.admin-entry {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:48px;
+  padding:8px 14px;
+  border:1px solid var(--slate-200);
+  border-radius:10px;
+  color:var(--navy-900);
+  background:var(--white);
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background-color .15s,border-color .15s;
+}
+.admin-entry:hover { background:var(--slate-100); border-color:var(--navy-800); }
+@media (max-width:479px) {
+  .admin-entry { margin-left:auto; }
+}
