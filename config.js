@@ -1,3 +1,3 @@
 window.APP_CONFIG = Object.freeze({
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbxZAPy14jqNWvzY7cU-kdmrnruHcAXjXJ-iAFHFn6dqRY0z4ZtgJQTHOULs_lcdrn4saw/exec",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbwqcfUMMqVYT20FR0vkfdyWUqSJzxVdF43u8U36SOnnNn7Td19VDubRddfFR_058rbL-g/exec",
 });
