@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="assets/styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">ข้ามไปยังช่องค้นหาผลการเรียน</a>
     <header class="site-header">
       <div class="header-inner">
         <a class="school-identity" href="./" aria-label="โรงเรียนเซนต์เทเรซา หน้าแรก">
@@ -25,7 +26,7 @@
       </div>
     </header>
 
-    <main class="page-shell">
+    <main id="main-content" class="page-shell" tabindex="-1">
       <section class="intro" aria-labelledby="page-title">
         <h1 id="page-title">ตรวจสอบผลการเรียน ร และ 0</h1>
         <p>กรอกรหัสประจำตัวนักเรียนเพื่อดูรายวิชาที่ต้องดำเนินการ</p>
@@ -74,6 +75,16 @@
       <div id="status-region" class="status-region" role="status" aria-live="polite" aria-atomic="true"></div>
       <section id="result-region" class="result-region" aria-live="polite" aria-label="ผลการค้นหา"></section>
 
+      <details class="lookup-help">
+        <summary>วิธีตรวจสอบผลการเรียน</summary>
+        <ol>
+          <li>กรอกรหัสประจำตัวนักเรียนเป็นตัวเลข 4–10 หลัก โดยใส่เลขศูนย์ด้านหน้าให้ครบตามรหัส</li>
+          <li>กด “ตรวจสอบผลการเรียน” ระบบจะแสดงรายวิชาที่มีผล ร หรือ 0 ของรหัสที่ค้นหา</li>
+          <li>หากมีรายวิชาที่ต้องดำเนินการ ให้ติดต่อครูประจำวิชาเพื่อสอบถามขั้นตอนการแก้ไขผลการเรียน</li>
+        </ol>
+        <p>หากไม่พบข้อมูล ให้ตรวจสอบรหัสอีกครั้ง ข้อความนี้ไม่ได้ยืนยันผลการเรียนในรายวิชาอื่น</p>
+      </details>
+
       <aside class="contact-note">
         <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
           <circle cx="12" cy="12" r="9" />
@@ -93,3 +104,4 @@
     <script type="module" src="assets/app.js"></script>
   </body>
 </html>
+

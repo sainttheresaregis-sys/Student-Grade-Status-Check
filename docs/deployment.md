@@ -21,11 +21,10 @@
 1. เปิด [script.google.com](https://script.google.com/) ด้วยบัญชีโรงเรียนและสร้างโปรเจกต์ใหม่
 2. คัดลอกเนื้อหาจาก `apps-script/Code.gs` ไปแทนไฟล์ `Code.gs`
 3. ใน Project Settings เปิดการแสดงไฟล์ manifest แล้วคัดลอก `apps-script/appsscript.json` ไปยัง `appsscript.json`
-4. ที่ Project Settings → Script properties เพิ่มค่าต่อไปนี้:
-   - `SPREADSHEET_ID`: ส่วนของ URL ชีตระหว่าง `/d/` และ `/edit`
-   - `SHEET_NAME`: ชื่อแท็บข้อมูลที่มองเห็นด้านล่างของชีต ต้องตรงทุกตัวอักษร
-5. บันทึก แล้วเลือกฟังก์ชัน `verifyConfiguration` จากแถบเครื่องมือและกด **Run** หนึ่งครั้ง
-6. อนุญาตสิทธิ์อ่านชีตเมื่อ Google แสดงหน้าขอสิทธิ์ จากนั้นตรวจว่า Execution log แสดงผลลัพธ์ `พร้อมใช้งาน`
+4. หากสร้าง Apps Script จากเมนู **ส่วนขยาย → Apps Script** ภายในชีต ระบบจะใช้ชีตนี้และแท็บแรกโดยอัตโนมัติ ไม่ต้องตั้งค่า Script properties
+5. สำหรับโปรเจกต์ Apps Script แบบแยกอิสระเท่านั้น ให้เพิ่ม `SPREADSHEET_ID` และ `SHEET_NAME` ใน Project Settings → Script properties
+6. บันทึก แล้วเลือกฟังก์ชัน `verifyConfiguration` จากแถบเครื่องมือและกด **Run** หนึ่งครั้ง
+7. อนุญาตสิทธิ์อ่านชีตเมื่อ Google แสดงหน้าขอสิทธิ์ จากนั้นตรวจว่า Execution log แสดงผลลัพธ์ `พร้อมใช้งาน`
 
 ฟังก์ชัน `verifyConfiguration` จะเปิดชีตจริง ตรวจชื่อแท็บ และตรวจหัวคอลัมน์ จึงช่วยพบค่าที่ตั้งผิดก่อน deploy โดยไม่แสดงข้อมูลนักเรียนใน log
 

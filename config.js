@@ -1,3 +1,4 @@
 window.APP_CONFIG = Object.freeze({
-  appsScriptUrl: "YOUR_APPS_SCRIPT_WEB_APP_URL",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbwXncfGOc7gUH3weRMBiWMKviP4owrfOBtoiJGPlLb9aT-A3t39ec0ASFifheNAcDdWAw/exec",
 });
+

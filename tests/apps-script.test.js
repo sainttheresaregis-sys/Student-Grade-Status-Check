@@ -171,3 +171,23 @@ test("verifyConfiguration opens the configured sheet and validates its headers",
   assert.equal(openedSpreadsheetId, "sheet-id");
   assert.equal(requestedSheetName, "ผลการเรียน");
 });
+
+test("getConfiguredSheet_ uses the first sheet in a bound spreadsheet without properties", () => {
+  const firstSheet = { getName: () => "ชีต1" };
+  let activeSpreadsheetReads = 0;
+  const { context } = loadAppsScript({
+    SpreadsheetApp: {
+      getActiveSpreadsheet() {
+        activeSpreadsheetReads += 1;
+        return {
+          getSheets() {
+            return [firstSheet];
+          },
+        };
+      },
+    },
+  });
+
+  assert.equal(context.getConfiguredSheet_({}), firstSheet);
+  assert.equal(activeSpreadsheetReads, 1);
+});

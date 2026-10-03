@@ -45,12 +45,16 @@ function doGet(e) {
 }
 
 function getConfiguredSheet_(properties) {
-  if (!properties.SPREADSHEET_ID || !properties.SHEET_NAME) {
-    throw new Error("Missing script configuration");
+  var spreadsheet = properties.SPREADSHEET_ID
+    ? SpreadsheetApp.openById(properties.SPREADSHEET_ID)
+    : SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) {
+    throw new Error("Spreadsheet configuration was not found");
   }
 
-  var spreadsheet = SpreadsheetApp.openById(properties.SPREADSHEET_ID);
-  var sheet = spreadsheet.getSheetByName(properties.SHEET_NAME);
+  var sheet = properties.SHEET_NAME
+    ? spreadsheet.getSheetByName(properties.SHEET_NAME)
+    : spreadsheet.getSheets()[0];
   if (!sheet) {
     throw new Error("Configured sheet was not found");
   }
