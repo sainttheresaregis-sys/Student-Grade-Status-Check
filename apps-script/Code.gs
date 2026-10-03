@@ -173,7 +173,7 @@ function createJsonpOutput_(callback, payload) {
 }
 
 // Called only through the Apps Script HTML service; the PIN never appears in a URL.
-function adminControl(pin, action) {
+function adminControl(pin, action, payload) {
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(5000)) throw new Error("ระบบกำลังทำงาน กรุณาลองใหม่");
   try {
@@ -187,9 +187,79 @@ function adminControl(pin, action) {
       cache.put("admin_failed_attempts", String(attempts + 1), 300);
       throw new Error("รหัสผู้ดูแลไม่ถูกต้อง");
     }
-    if (["status", "open", "close"].indexOf(action) === -1) throw new Error("คำสั่งไม่ถูกต้อง");
+    if (["status", "open", "close", "records", "addRecord", "deleteRecord"].indexOf(action) === -1) throw new Error("คำสั่งไม่ถูกต้อง");
     cache.remove("admin_failed_attempts");
+    if (["records", "addRecord", "deleteRecord"].indexOf(action) !== -1) {
+      return adminRecords_(store.getProperties(), action, payload);
+    }
     if (action !== "status") store.setProperty("LOOKUP_ENABLED", action === "open" ? "true" : "false");
     return { enabled: store.getProperty("LOOKUP_ENABLED") !== "false" };
   } finally { lock.releaseLock(); }
+}
+
+// Private helpers cannot be called directly through google.script.run.
+// All record operations run under the authenticated adminControl script lock.
+function adminRecords_(properties, action, payload) {
+  payload = payload || {};
+  var studentId = trimValue_(payload.studentId);
+  if (!/^[0-9]{5}$/.test(studentId)) throw new Error("กรุณากรอกรหัสนักเรียนเป็นตัวเลข 5 หลัก");
+  var sheet = getConfiguredSheet_(properties);
+  var rows = sheet.getDataRange().getDisplayValues();
+  var columns = resolveColumns_(rows[0]);
+
+  if (action === "addRecord") {
+    var record = {studentId: studentId};
+    var limits = {name: 150, className: 60, subject: 200};
+    Object.keys(limits).forEach(function (key) {
+      var value = trimValue_(payload[key]);
+      if (!value || value.length > limits[key] || /^[=+@-]/.test(value) || /[\x00-\x1f]/.test(value)) {
+        throw new Error("กรุณากรอกชื่อ ชั้น และรายวิชาให้ถูกต้อง โดยไม่ใช้สูตรในช่องข้อมูล");
+      }
+      record[key] = value;
+    });
+    record.status = trimValue_(payload.status);
+    if (record.status !== "ร" && record.status !== "0") throw new Error("เลือกผลการเรียน ร หรือ 0 เท่านั้น");
+    rows.slice(1).forEach(function (row) {
+      if (trimValue_(row[columns.studentId]) !== studentId) return;
+      if (trimValue_(row[columns.name]) !== record.name || trimValue_(row[columns.className]) !== record.className) {
+        throw new Error("ชื่อหรือชั้นไม่ตรงกับรหัสนักเรียนในฐานข้อมูล กรุณาค้นหาและตรวจสอบก่อนเพิ่ม");
+      }
+      if (trimValue_(row[columns.subject]) === record.subject) {
+        throw new Error("มีรายวิชานี้สำหรับนักเรียนอยู่แล้ว กรุณาตรวจสอบรายการเดิม");
+      }
+    });
+    var newRow = rows[0].map(function () { return ""; });
+    Object.keys(record).forEach(function (key) { newRow[columns[key]] = record[key]; });
+    var nextRow = sheet.getLastRow() + 1;
+    if (nextRow > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), 1);
+    // Plain text preserves leading zeroes and prevents spreadsheet formula execution.
+    sheet.getRange(nextRow, 1, 1, newRow.length).setNumberFormat("@").setValues([newRow]);
+    SpreadsheetApp.flush();
+  } else if (action === "deleteRecord") {
+    var rowNumber = payload.row;
+    var current = rows[rowNumber - 1];
+    if (typeof rowNumber !== "number" || rowNumber % 1 !== 0 || rowNumber < 2 || !current ||
+        JSON.stringify(current) !== payload.snapshot || trimValue_(current[columns.studentId]) !== studentId) {
+      throw new Error("ข้อมูลมีการเปลี่ยนแปลง กรุณาค้นหาใหม่ก่อนลบ");
+    }
+    if (["ร", "0"].indexOf(trimValue_(current[columns.status])) === -1) {
+      throw new Error("ลบได้เฉพาะรายการผลการเรียน ร หรือ 0");
+    }
+    // Recheck the full displayed row, not just its position, before deleting.
+    sheet.deleteRow(rowNumber);
+    SpreadsheetApp.flush();
+  }
+  if (action !== "records") rows = sheet.getDataRange().getDisplayValues();
+  var records = [];
+  var student = null;
+  rows.slice(1).forEach(function (row, index) {
+    if (trimValue_(row[columns.studentId]) !== studentId) return;
+    if (!student) student = {name: trimValue_(row[columns.name]), className: trimValue_(row[columns.className])};
+    var status = trimValue_(row[columns.status]);
+    if (status !== "ร" && status !== "0") return;
+    records.push({row: index + 2, snapshot: JSON.stringify(row), studentId: studentId,
+      name: trimValue_(row[columns.name]), className: trimValue_(row[columns.className]),
+      subject: trimValue_(row[columns.subject]), status: status});
+  });
+  return {studentId: studentId, student: student, records: records};
 }

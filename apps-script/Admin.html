@@ -1,18 +1,69 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><style>
-*{box-sizing:border-box}body{margin:0;background:#eff4f9;color:#0b2b55;font-family:Tahoma,sans-serif;line-height:1.7}main{max-width:520px;margin:48px auto;padding:28px;background:white;border:1px solid #dce5ef;border-radius:18px}h1{font-size:25px;margin:0 0 12px}label{display:block;margin-bottom:8px}input,button{font:inherit;font-size:16px;min-height:48px;border-radius:10px;padding:12px;width:100%}input{border:1px solid #a5b8cc}button{border:0;background:#0b2b55;color:white;cursor:pointer;margin-top:14px}button:disabled{opacity:.55;cursor:wait}.close{background:#a12635}.logout{color:#0b2b55;background:#eaf2fb}#message{min-height:28px;color:#a12635}#status{font-weight:bold;font-size:20px}button:focus-visible,input:focus-visible{outline:3px solid #2875ca;outline-offset:3px}[hidden]{display:none!important}@media(max-width:560px){main{margin:20px 16px;padding:22px}}
-</style></head><body><main>
-<h1>ผู้ดูแลระบบผลการเรียน</h1>
-<form id="login"><label for="pin">รหัสผู้ดูแลระบบ</label><input id="pin" type="password" inputmode="numeric" autocomplete="off" required><button>เข้าสู่ระบบ</button></form>
-<section id="controls" hidden><p id="status" role="status"></p><button id="open" type="button">เปิดระบบค้นหาผลการเรียน</button><button id="close" class="close" type="button">ปิดระบบค้นหาผลการเรียน</button><button id="logout" class="logout" type="button">ออกจากระบบ</button></section>
-<p id="message" role="alert"></p>
-</main><script>
+<html lang="th">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ผู้ดูแลระบบผลการเรียน</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#0b2b55;font-family:Tahoma,sans-serif;line-height:1.7}main{width:calc(100% - 32px);max-width:860px;margin:20px auto 40px}h1{font-size:26px;margin:0}h2{font-size:20px;margin:0 0 12px}p{margin:8px 0 16px}label{display:block;font-size:15px;margin-bottom:6px}input,button,select{font:inherit;font-size:16px;min-height:48px;border-radius:10px;padding:10px 12px;width:100%;min-width:0}input,select{border:1px solid #a5b8cc;background:white;color:#0b2b55}button{border:1px solid transparent;background:#0b2b55;color:white;cursor:pointer}button:hover{background:#164779}button:disabled{opacity:.55;cursor:wait}.secondary{color:#0b2b55;background:#edf2f8;border-color:#dce5ef}.secondary:hover{background:#dce5ef}.danger{background:#fff;color:#9d2432;border-color:#d9b3b7}.danger:hover{background:#fff0f0}.panel{padding:20px;background:white;border:1px solid #dce5ef;border-radius:16px;margin-top:16px}.stack{display:grid;gap:14px}.grid{display:grid;gap:14px}.actions{display:flex;gap:12px;flex-wrap:wrap}.actions>*{flex:1 1 190px}.muted{color:#5f7186;font-size:14px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}#logout{width:auto}#message{min-height:28px;overflow-wrap:anywhere}#status{font-weight:bold}#records{display:grid;gap:12px;margin-top:14px}.record{padding:16px;border:1px solid #dce5ef;border-radius:12px;overflow-wrap:anywhere}.record h3{font-size:17px;margin:0 0 8px}.record p{margin:4px 0}.record button{margin-top:12px}.grade{display:inline-block;border-radius:6px;padding:2px 10px;font-weight:bold}.grade-r{background:#fff3cd;color:#795b0c}.grade-zero{background:#fde7e9;color:#9d2432}dialog{width:calc(100% - 32px);max-width:460px;padding:22px;border:1px solid #dce5ef;border-radius:16px;color:#0b2b55;overflow-wrap:anywhere}dialog::backdrop{background:#071f3e88}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #2875ca;outline-offset:3px}[hidden]{display:none!important}@media(min-width:600px){main{margin-top:28px}.grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}.record button{width:auto}.panel{padding:24px}}
+</style></head>
+<body><main>
+<h1>ผู้ดูแลระบบผลการเรียน</h1><p class="muted">ฝ่ายวิชาการ โรงเรียนเซนต์เทเรซา</p>
+<form id="login" class="panel stack"><div><label for="pin">รหัสผู้ดูแลระบบ</label><input id="pin" type="password" inputmode="numeric" autocomplete="off" required></div><button>เข้าสู่ระบบ</button></form>
+<p id="message" role="status" aria-live="polite"></p>
+<section id="controls" hidden>
+<div class="topline"><p id="status"></p><button id="logout" class="secondary" type="button">ออกจากระบบ</button></div>
+<section class="panel"><h2>เปิด–ปิดระบบค้นหา</h2><div class="actions"><button id="open" type="button">เปิดระบบค้นหาผลการเรียน</button><button id="close" class="secondary" type="button">ปิดระบบค้นหาผลการเรียน</button></div></section>
+<section class="panel" aria-labelledby="manage-heading"><h2 id="manage-heading">ค้นหาและลบผลการเรียน ร / 0</h2>
+<p class="muted">ค้นหาด้วยรหัสนักเรียน แล้วเลือกลบเฉพาะรายวิชาที่ต้องการ รายการ มผ. และวิชาอื่นจะยังคงอยู่</p>
+<form id="search" class="stack"><div><label for="search-id">รหัสนักเรียน 5 หลัก</label><input id="search-id" inputmode="numeric" pattern="[0-9]{5}" minlength="5" maxlength="5" required autocomplete="off" placeholder="รหัสนักเรียน"></div><button>ค้นหารายการนักเรียน</button></form>
+<p id="record-summary" role="status"></p><div id="records"></div></section>
+<section class="panel"><h2>เพิ่มผลการเรียน</h2><p class="muted">เพิ่มครั้งละ 1 รายวิชา หากนักเรียนมีข้อมูลอยู่แล้ว ให้ค้นหาด้านบนเพื่อเติมชื่อและชั้น</p>
+<form id="add" class="grid">
+<div><label for="student-id">รหัสนักเรียน 5 หลัก</label><input id="student-id" name="studentId" inputmode="numeric" pattern="[0-9]{5}" minlength="5" maxlength="5" required autocomplete="off"></div>
+<div><label for="class-name">ชั้น / ห้อง</label><input id="class-name" name="className" maxlength="60" placeholder="เช่น ม.6/3" required></div>
+<div class="full"><label for="student-name">ชื่อ–นามสกุล</label><input id="student-name" name="name" maxlength="150" required></div>
+<div class="full"><label for="subject">รหัสวิชาและชื่อวิชา</label><input id="subject" name="subject" maxlength="200" placeholder="กรอกให้ตรงกับข้อมูลรายวิชาของโรงเรียน" required></div>
+<div class="full"><label for="grade">ผลการเรียน</label><select id="grade" name="status" required><option value="">เลือกผลการเรียน</option><option value="ร">ร</option><option value="0">0</option></select></div>
+<button class="full">บันทึกผลการเรียน</button></form></section>
+</section>
+</main>
+<dialog id="delete-dialog" aria-labelledby="delete-heading"><h2 id="delete-heading">ยืนยันการลบรายวิชา</h2><p id="delete-description"></p><p class="muted">ลบเฉพาะรายการนี้ออกจากฐานข้อมูล และผลการค้นหาของนักเรียนจะเปลี่ยนตาม</p><div class="actions"><button id="cancel-delete" class="secondary" type="button">ยกเลิก</button><button id="confirm-delete" class="danger" type="button">ยืนยันลบรายการนี้</button></div></dialog>
+<script>
 let secret = '';
 let enabled = null;
+let pendingDelete = null;
+let working = false;
 const $ = id => document.getElementById(id);
-function busy(value){document.querySelectorAll('button').forEach(b=>b.disabled=value);if(!value && enabled!==null){$('open').disabled=enabled;$('close').disabled=!enabled;}}
-function run(action){busy(true);$('message').textContent='กำลังดำเนินการ…';google.script.run.withSuccessHandler(result=>{enabled=result.enabled;$('login').hidden=true;$('controls').hidden=false;$('pin').value='';$('status').textContent=enabled?'🟢 เปิดระบบอยู่':'🔴 ปิดระบบอยู่';$('message').textContent=action==='status'?'':'บันทึกสถานะเรียบร้อยแล้ว';busy(false);}).withFailureHandler(error=>{$('message').textContent=error.message||'ไม่สามารถดำเนินการได้ กรุณาลองใหม่';busy(false);}).adminControl(secret,action);}
+function busy(value){working=value;document.querySelectorAll('button,input,select').forEach(el=>el.disabled=value);if(!value && enabled!==null){$('open').disabled=enabled;$('close').disabled=!enabled;}}
+function request(action,payload,onSuccess){
+ if(working)return;
+ busy(true);$('message').textContent='กำลังดำเนินการ…';
+ google.script.run.withSuccessHandler(result=>{busy(false);onSuccess(result);}).withFailureHandler(error=>{
+  busy(false);$('message').textContent=(error&&error.message)||'ไม่สามารถดำเนินการได้ กรุณาค้นหาเพื่อตรวจสอบข้อมูลแล้วลองใหม่';
+ }).adminControl(secret,action,payload);
+}
+function run(action){request(action,null,result=>{enabled=result.enabled;$('login').hidden=true;$('controls').hidden=false;$('pin').value='';$('status').textContent=enabled?'สถานะ: เปิดระบบค้นหาอยู่':'สถานะ: ปิดระบบค้นหาอยู่';$('message').textContent=action==='status'?'เข้าสู่ระบบแล้ว':'บันทึกสถานะเรียบร้อยแล้ว';busy(false);});}
+function renderRecords(result){
+ $('search-id').value=result.studentId;
+ $('student-id').value=result.studentId;
+ $('student-name').value=result.student?result.student.name:'';
+ $('class-name').value=result.student?result.student.className:'';
+ $('records').replaceChildren();
+ $('record-summary').textContent='รหัส '+result.studentId+' — '+(result.records.length?'พบผลการเรียน ร / 0 จำนวน '+result.records.length+' รายวิชา':'ไม่พบรายการผลการเรียน ร หรือ 0');
+ result.records.forEach(record=>{
+  const card=document.createElement('article');card.className='record';
+  const title=document.createElement('h3');title.textContent=record.subject;
+  const identity=document.createElement('p');identity.textContent=record.name+' • '+record.className;
+  const grade=document.createElement('span');grade.className='grade '+(record.status==='ร'?'grade-r':'grade-zero');grade.textContent='ผลการเรียน '+record.status;
+  const button=document.createElement('button');button.type='button';button.className='danger';button.textContent='ลบรายวิชานี้';button.setAttribute('aria-label','ลบ '+record.subject);
+  button.onclick=()=>{pendingDelete=record;$('delete-description').textContent=record.studentId+' '+record.name+' ('+record.className+') — '+record.subject+' ผลการเรียน '+record.status;$('delete-dialog').showModal();$('cancel-delete').focus();};
+  card.append(title,identity,grade,document.createElement('br'),button);$('records').append(card);
+ });
+}
 $('login').addEventListener('submit',e=>{e.preventDefault();secret=$('pin').value;run('status');});
 $('open').onclick=()=>run('open');$('close').onclick=()=>run('close');
-$('logout').onclick=()=>{secret='';enabled=null;$('controls').hidden=true;$('login').hidden=false;$('message').textContent='';$('pin').value='';busy(false);$('pin').focus();};
+$('search').addEventListener('submit',e=>{e.preventDefault();request('records',{studentId:$('search-id').value},result=>{renderRecords(result);$('message').textContent='ค้นหาเรียบร้อยแล้ว';});});
+$('add').addEventListener('submit',e=>{e.preventDefault();const payload=Object.fromEntries(new FormData(e.currentTarget));request('addRecord',payload,result=>{renderRecords(result);$('subject').value='';$('grade').value='';$('message').textContent='เพิ่มผลการเรียนเรียบร้อยแล้ว';$('record-summary').scrollIntoView({block:'center'});});});
+$('cancel-delete').onclick=()=>{$('delete-dialog').close();pendingDelete=null;};
+$('delete-dialog').addEventListener('cancel',()=>{pendingDelete=null;});
+$('confirm-delete').onclick=()=>{const selected=pendingDelete;if(!selected)return;$('delete-dialog').close();pendingDelete=null;request('deleteRecord',selected,result=>{renderRecords(result);$('message').textContent='ลบรายวิชาที่เลือกเรียบร้อยแล้ว';$('search-id').focus();});};
+$('logout').onclick=()=>{secret='';enabled=null;pendingDelete=null;$('controls').hidden=true;$('login').hidden=false;$('message').textContent='';$('pin').value='';$('add').reset();$('search').reset();$('records').replaceChildren();$('record-summary').textContent='';busy(false);$('pin').focus();};
 </script></body></html>
