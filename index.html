@@ -2,7 +2,7 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0b2b55" />
     <meta name="description" content="ระบบตรวจสอบรายวิชาที่มีผลการเรียน ร หรือ 0 สำหรับนักเรียนโรงเรียนเซนต์เทเรซา" />
     <title>ตรวจสอบผลการเรียน ร และ 0 | โรงเรียนเซนต์เทเรซา</title>
@@ -28,7 +28,7 @@
 
     <main id="main-content" class="page-shell" tabindex="-1">
       <section class="intro" aria-labelledby="page-title">
-        <h1 id="page-title">ตรวจสอบผลการเรียน ร และ 0</h1>
+        <h1 id="page-title">ตรวจสอบผลการเรียน <span class="grade-types">ร และ 0</span></h1>
         <p>กรอกรหัสประจำตัวนักเรียนเพื่อดูรายวิชาที่ต้องดำเนินการ</p>
       </section>
 
@@ -44,7 +44,7 @@
                 id="student-id"
                 name="studentId"
                 type="text"
-                inputmode="numeric"
+                inputmode="numeric" enterkeyhint="search"
                 autocomplete="off"
                 maxlength="10"
                 aria-describedby="student-id-hint form-error"
@@ -104,4 +104,6 @@
     <script type="module" src="assets/app.js"></script>
   </body>
 </html>
+
+
 

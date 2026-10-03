@@ -643,3 +643,43 @@ input {
 .lookup-help ol { padding-left: 24px; margin: 16px 0; }
 .lookup-help li + li { margin-top: 8px; }
 .lookup-help p { margin: 0; }
+
+/* Phone layout: keep search visible and allow long Thai names to wrap. */
+body {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+.student-identity { min-width: 0; }
+.student-name { overflow-wrap: anywhere; }
+@media (max-width: 720px) {
+  .header-inner { min-height: 72px; }
+  .school-mark { width: 48px; height: 48px; flex-shrink: 0; }
+  .school-identity { gap: 12px; }
+  .page-shell { padding-top: 28px; padding-bottom: 28px; }
+  .intro { margin-bottom: 22px; }
+  .intro h1 { font-size: clamp(1.6rem, 6.8vw, 2rem); line-height: 1.45; letter-spacing: -0.02em; }
+  .intro p { margin-top: 10px; line-height: 1.65; }
+  .lookup-panel { padding: 20px 16px; }
+  #student-id { font-size: 18px; min-height: 56px; scroll-margin-top: 20px; }
+  .submit-button { min-height: 56px; padding: 12px 16px; }
+  .field-hint, .form-error { font-size: 0.9rem; }
+  .privacy-note { font-size: 0.9rem; line-height: 1.65; }
+  .student-summary { gap: 12px; padding: 18px 16px; }
+  .student-avatar { width: 44px; height: 44px; }
+  .student-name { font-size: 1.15rem; line-height: 1.65; }
+  .student-class { line-height: 1.6; }
+  .result-heading { padding: 18px 16px 10px; font-size: 1.05rem; }
+  .result-list { padding: 0 16px 14px; }
+  .result-row { gap: 12px; align-items: flex-start; }
+  .result-subject { line-height: 1.8; }
+  .result-status { margin-top: 14px; min-width: 68px; }
+  .lookup-help { margin-top: 22px; padding: 8px 0; }
+  .lookup-help summary { min-height: 48px; padding: 10px 0; }
+  .lookup-help p { padding-bottom: 12px; }
+  .contact-note { padding: 16px; }
+  .site-footer { padding-bottom: max(20px, env(safe-area-inset-bottom, 0px)); }
+}
+@media (hover: none) {
+  .submit-button:hover { transform: none; }
+}
+.grade-types { white-space: nowrap; }
